@@ -3,7 +3,7 @@
  * Plugin Name: KaTeX
  * Plugin URI: https://wordpress.org/plugins/katex
  * Description: Use the fastest math typesetting library on your website.
- * Version: 2.1.0
+ * Version: 2.2.3
  * Author: Thomas Churchman
  * Author URI: https://churchman.nl
  * License: GPLv2 or later
@@ -30,6 +30,7 @@ define('KATEX__PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('KATEX__PLUGIN_URL', plugin_dir_url(__FILE__));
 
 define('KATEX__OPTION_DEFAULT_USE_JSDELIVR', false);
+define('KATEX__OPTION_DEFAULT_LOAD_ASSETS_CONDITIONALLY', false);
 define('KATEX__OPTION_DEFAULT_ENABLE_LATEX_SHORTCODE', true);
 
 
@@ -41,16 +42,16 @@ if (is_admin() && !wp_doing_ajax()) {
     require_once(KATEX__PLUGIN_DIR . 'scripts/admin.php');
 }
 
+require_once(KATEX__PLUGIN_DIR . 'scripts/shortcode.php');
 if (!wp_doing_ajax()) {
     require_once(KATEX__PLUGIN_DIR . 'scripts/block.php');
-    require_once(KATEX__PLUGIN_DIR . 'scripts/shortcode.php');
     require_once(KATEX__PLUGIN_DIR . 'scripts/resource.php');
 }
-
 
 register_uninstall_hook(__FILE__, 'katex_uninstall');
 
 function katex_uninstall() {
     delete_option('katex_use_jsdelivr');
+    delete_option('katex_load_assets_conditionally');
     delete_option('katex_enable_latex_shortcode');
 }

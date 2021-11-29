@@ -34,6 +34,11 @@ function katex_settings_init() {
 
     register_setting(
         'pluginPage',
+        'katex_load_assets_conditionally'
+    );
+
+    register_setting(
+        'pluginPage',
         'katex_enable_latex_shortcode'
     );
 
@@ -48,9 +53,17 @@ function katex_settings_init() {
         'katex_jsdelivr_setting',
         __('Use jsDelivr to load files', 'katex'),
         'katex_jsdelivr_setting_render',
-          'pluginPage',
-          'katex_pluginPage_section'
-     );
+        'pluginPage',
+        'katex_pluginPage_section'
+    );
+
+    add_settings_field(
+        'katex_conditional_assets_setting',
+        __('Load KaTeX assets conditionally', 'katex'),
+        'katex_conditional_assets_setting_render',
+        'pluginPage',
+        'katex_pluginPage_section'
+    );
 
     add_settings_field(
         'katex_latex_shortcode_setting',
@@ -72,6 +85,19 @@ function katex_jsdelivr_setting_render() {
         value='1'>
     <?php
     echo __('Using the <a href="http://www.jsdelivr.com" target="_blank">jsDelivr</a> CDN will make KaTeX load faster.', 'katex');
+}
+
+
+function katex_conditional_assets_setting_render() {
+    $option_katex_load_assets_conditionally = get_option('katex_load_assets_conditionally', KATEX__OPTION_DEFAULT_LOAD_ASSETS_CONDITIONALLY);
+    ?>
+    <input
+        type='checkbox'
+        name='katex_load_assets_conditionally'
+        <?php checked($option_katex_load_assets_conditionally, 1); ?>
+        value='1'>
+    <?php
+    echo __('Only load the KaTeX JavaScript and CSS assets when KaTeX is used on the page. This might introduce asset enqueueing compatibility issues with themes or other plugins.', 'katex');
 }
 
 

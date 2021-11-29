@@ -17,9 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-add_action('init', 'katex_shortcode_init');
-add_filter('no_texturize_shortcodes', 'katex_shortcode_exempt_from_wptexturize');
-
+katex_shortcode_init();
 
 function katex_shortcode_init() {
     $option_enable_latex_shortcode = get_option('katex_enable_latex_shortcode', KATEX__OPTION_DEFAULT_ENABLE_LATEX_SHORTCODE);
@@ -29,6 +27,8 @@ function katex_shortcode_init() {
     if ($option_enable_latex_shortcode) {
         add_shortcode('latex', 'katex_display_inline_render');
     }
+
+    add_filter('no_texturize_shortcodes', 'katex_shortcode_exempt_from_wptexturize');
 }
 
 
@@ -47,7 +47,9 @@ function katex_display_inline_render($attributes, $content = null) {
     // Truthy -> 'true', falsy -> 'false'
     $display = $attributes['display'] ? 'true' : 'false';
 
-    $encoded = html_entity_decode($content);
+    $content = preg_replace("|<br\s*/?>|", "\n", $content);
+    $encoded = htmlspecialchars(html_entity_decode($content));
+//    $encoded = html_entity_decode($content);
     return sprintf('<span class="katex-eq" data-katex-display="%s">%s</span>', $display, $encoded);
 }
 
