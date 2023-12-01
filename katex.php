@@ -32,6 +32,20 @@ define('KATEX__PLUGIN_URL', plugin_dir_url(__FILE__));
 define('KATEX__OPTION_DEFAULT_USE_JSDELIVR', false);
 define('KATEX__OPTION_DEFAULT_LOAD_ASSETS_CONDITIONALLY', false);
 define('KATEX__OPTION_DEFAULT_ENABLE_LATEX_SHORTCODE', true);
+define('KATEX__OPTION_DEFAULT_ENABLE_AUTORENDER', false);
+// define('KATEX__OPTION_DEFAULT_AUTORENDER_OPTIONS', "\{\}");
+define('KATEX__OPTION_DEFAULT_AUTORENDER_OPTIONS', "{
+    // customised options
+    // • auto-render specific keys, e.g.:
+    delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false},
+        {left: '\\(', right: '\\)', display: false},
+        {left: '\\[', right: '\\]', display: true}
+    ],
+    // • rendering keys, e.g.:
+    throwOnError : false
+  }");
 
 
 $katex_resources_required = false;
@@ -54,4 +68,6 @@ function katex_uninstall() {
     delete_option('katex_use_jsdelivr');
     delete_option('katex_load_assets_conditionally');
     delete_option('katex_enable_latex_shortcode');
+    delete_option('katex_enable_autorender');
+    delete_option('katex_autorender_options');
 }

@@ -42,6 +42,16 @@ function katex_settings_init() {
         'katex_enable_latex_shortcode'
     );
 
+    register_setting(
+        'pluginPage',
+        'katex_enable_autorender'
+    );
+
+    register_setting(
+        'pluginPage',
+        'katex_autorender_options'
+    );
+
     add_settings_section(
         'katex_pluginPage_section',
         __('Main', 'katex'),
@@ -72,6 +82,22 @@ function katex_settings_init() {
         'pluginPage',
         'katex_pluginPage_section'
     );
+
+    add_settings_field(
+        'katex_enable_autorender_setting',
+        __('Enable the KaTeX Auto-render Extension', 'katex'),
+        'katex_enable_autorender_setting_render',
+        'pluginPage',
+        'katex_pluginPage_section'
+    );    
+
+    add_settings_field(
+        'katex_autorender_options_setting',
+        __('The autorender option content', 'katex'),
+        'katex_autorender_options_setting_render',
+        'pluginPage',
+        'katex_pluginPage_section'
+    );    
 }
 
 
@@ -114,7 +140,27 @@ function katex_latex_shortcode_setting_render() {
 
 }
 
+function katex_enable_autorender_setting_render() {
+    $option_katex_enable_autorender = get_option('katex_enable_autorender', KATEX__OPTION_DEFAULT_ENABLE_AUTORENDER);
+    ?>
+    <input
+        type='checkbox'
+        name='katex_enable_autorender'
+        <?php checked($option_katex_enable_autorender, 1); ?>
+        value='1'>
+    <?php
+    echo __('Automatically render all of the math inside of text. Read more: <a href="https://katex.org/docs/autorender" target="_blank">Autorender</a>', 'katex');
 
+}
+
+function katex_autorender_options_setting_render() {
+    $option_katex_autorender_options = get_option('katex_autorender_options', KATEX__OPTION_DEFAULT_AUTORENDER_OPTIONS);
+    ?>
+    <textarea cols='40' rows='5' name='katex_autorender_options'><?php echo $option_katex_autorender_options; ?></textarea>
+    <?php
+    echo __('Optional object argument that can have the same keys as the object passed to katex.render. Read more: <a href="https://katex.org/docs/autorender" target="_blank">Autorender</a>', 'katex');
+
+}
 function katex_settings_section_callback() {
      echo __('', 'katex');
 }

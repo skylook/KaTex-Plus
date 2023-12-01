@@ -99,6 +99,8 @@ function katex_enable() {
     global $katex_resources_required;
 
     $option_load_assets_conditionally = get_option('katex_load_assets_conditionally', KATEX__OPTION_DEFAULT_LOAD_ASSETS_CONDITIONALLY);
+    $option_katex_enable_autorender = get_option('katex_enable_autorender', KATEX__OPTION_DEFAULT_ENABLE_AUTORENDER);
+    $option_katex_autorender_options = get_option('katex_autorender_options', KATEX__OPTION_DEFAULT_AUTORENDER_OPTIONS);
 
     if ($katex_resources_required || !$option_load_assets_conditionally) {
         ?>
@@ -152,20 +154,27 @@ function katex_enable() {
                 katexObserver.observe(document.body, katexObservationConfig);
             });
 
+
+        <?php
+        if ($option_katex_enable_autorender) {
+            ?>
             // const katex = require('katex');
 
-            // renderMathInElement(document.body, {
-            //   // customised options
-            //   // • auto-render specific keys, e.g.:
-            //   delimiters: [
-            //       {left: '$$', right: '$$', display: true},
-            //       {left: '$', right: '$', display: false},
-            //       {left: '\\(', right: '\\)', display: false},
-            //       {left: '\\[', right: '\\]', display: true}
-            //   ],
-            //   // • rendering keys, e.g.:
-            //   throwOnError : false
-            // });
+            renderMathInElement(document.body, {
+              // customised options
+              // • auto-render specific keys, e.g.:
+              delimiters: [
+                  {left: '$$', right: '$$', display: true},
+                  {left: '$', right: '$', display: false},
+                  {left: '\\(', right: '\\)', display: false},
+                  {left: '\\[', right: '\\]', display: true}
+              ],
+              // • rendering keys, e.g.:
+              throwOnError : false
+            });
+        <?php
+        }
+        ?>
 
         </script>
         <?php
