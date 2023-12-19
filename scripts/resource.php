@@ -152,10 +152,8 @@ function katex_enable() {
                 };
 
                 katexObserver.observe(document.body, katexObservationConfig);
-            });
 
-
-        <?php
+                <?php
         if ($option_katex_enable_autorender) {
             ?>
             // const katex = require('katex');
@@ -175,6 +173,10 @@ function katex_enable() {
         <?php
         }
         ?>
+            });
+
+
+
 
         </script>
         <?php
