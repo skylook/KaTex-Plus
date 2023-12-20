@@ -34,18 +34,12 @@ define('KATEX__OPTION_DEFAULT_LOAD_ASSETS_CONDITIONALLY', false);
 define('KATEX__OPTION_DEFAULT_ENABLE_LATEX_SHORTCODE', true);
 define('KATEX__OPTION_DEFAULT_ENABLE_AUTORENDER', false);
 // define('KATEX__OPTION_DEFAULT_AUTORENDER_OPTIONS', "\{\}");
-define('KATEX__OPTION_DEFAULT_AUTORENDER_OPTIONS', "{
-    // customised options
-    // • auto-render specific keys, e.g.:
-    delimiters: [
-        {left: '$$', right: '$$', display: true},
-        {left: '$', right: '$', display: false},
-        {left: '\\(', right: '\\)', display: false},
-        {left: '\\[', right: '\\]', display: true}
-    ],
-    // • rendering keys, e.g.:
-    throwOnError : false
-  }");
+define('KATEX__OPTION_DEFAULT_AUTORENDER_OPTIONS', "              [
+    {left: '$$', right: '$$', display: true},
+    {left: '$', right: '$', display: false},
+    {left: '\\(', right: '\\)', display: false},
+    {left: '\\[', right: '\\]', display: true}
+]");
 
 
 $katex_resources_required = false;
