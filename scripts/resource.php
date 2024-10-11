@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-define('KATEX_JS_VERSION', '0.16.9');
+define('KATEX_JS_VERSION', '0.16.11');
 
 
 add_action('init', 'katex_resources_init');
