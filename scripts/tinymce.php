@@ -9,10 +9,37 @@ function add_latex_button() {
     <script>
     jQuery(document).ready(function($) {
         $('#insert-latex-button').click(function() {
-            var latexCode = prompt('Enter LaTeX code:', '');
-            if (latexCode !== null) {
-                wp.media.editor.insert('[latex]' + latexCode + '[/latex]');
-            }
+            var dialog = $('<div></div>').attr('title', 'Insert LaTeX').addClass('latex-dialog').appendTo('body'); // Added latex-dialog class
+            var latexCodeField = $('<textarea></textarea>').attr('id', 'latex-code').css({'width': '100%', 'height': '100px', 'display': 'block'}).appendTo(dialog); // Added display: block
+            var modeSelect = $('<select></select>').attr('id', 'latex-mode').css({'width': '100%', 'margin-top': '10px'}).appendTo(dialog); // Added width and margin
+            $('<option></option>').attr('value', 'inline').text('Inline').appendTo(modeSelect);
+            $('<option></option>').attr('value', 'block').text('Block').appendTo(modeSelect);
+
+
+            dialog.dialog({
+                modal: true,
+                buttons: {
+                    'Insert': {
+                        text: 'Insert',
+                        class: 'insert-latex-button', // Added class to the button
+                        click: function() {
+                            
+                            var latexCode = $('#latex-code').val();
+                            var mode = $('#latex-mode').val();
+                            var shortcode = '[latex' + (mode === 'block' ? ' display="true"]' : ']') + latexCode + '[/latex]';
+                            wp.media.editor.insert(shortcode);
+                            $(this).dialog('close');
+
+                        }
+                    },
+                    'Cancel': function() {
+                        $(this).dialog('close');
+                    }
+                },
+                close: function() {
+                    $(this).remove();
+                }
+            });
         });
     });
     </script>

@@ -79,6 +79,11 @@ function katex_resources_init() {
         add_action('admin_enqueue_scripts', 'katex_admin_resources_enqueue'); // Ensure this action is hooked to 'admin_enqueue_scripts'
     }
 
+    if (is_admin()) {
+        wp_enqueue_script('jquery-ui-dialog'); // Enqueue jQuery UI Dialog
+        wp_enqueue_style('wp-jquery-ui-dialog'); // Enqueue jQuery UI Dialog styles
+    }
+
 }
 
 

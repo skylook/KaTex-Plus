@@ -7,3 +7,10 @@
 #insert-latex-button:hover .latex-icon {
     opacity: 0.7;
 }
+
+/* Style the LaTeX dialog */
+.latex-dialog .ui-dialog-buttonpane .insert-latex-button {
+    background-color: #125E96;
+    color: #fff;
+    border-color: #125E96;
+}
