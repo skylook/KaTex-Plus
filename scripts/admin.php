@@ -19,6 +19,7 @@
 
 add_action('admin_menu', 'katex_add_admin_menu');
 add_action('admin_init', 'katex_settings_init');
+add_action('admin_enqueue_scripts', 'katex_admin_enqueue_styles'); // Add enqueue action
 
 
 function katex_add_admin_menu() {
@@ -180,3 +181,9 @@ function katex_options_page() {
     </div>
     <?php
 }
+
+// Enqueue admin styles
+function katex_admin_enqueue_styles() {
+    wp_enqueue_style('katex-admin-styles', KATEX__PLUGIN_URL . 'assets/admin.css');
+}
+?>

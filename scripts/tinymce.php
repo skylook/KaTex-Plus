@@ -1,17 +1,10 @@
 <?php
 
-// Remove TinyMCE hooks and filters
-remove_action('init', 'my_tinymce_button');
-remove_filter('tiny_mce_version', '__return_false');
-remove_filter('mce_external_plugins', 'my_add_tinymce_plugin');
-remove_filter('mce_buttons', 'my_register_tinymce_button');
-remove_filter('mce_buttons_2', 'my_register_tinymce_button_textmode');
-
-// Add action for media_buttons
 add_action('media_buttons', 'add_latex_button');
 
 function add_latex_button() {
-    echo '<button type="button" id="insert-latex-button" class="button">Add LaTeX</button>';
+    $icon_url = KATEX__PLUGIN_URL . 'assets/images/square-root-variable-solid.svg';
+    echo '<button type="button" id="insert-latex-button" class="button"><img src="' . $icon_url . '" class="latex-icon dashicons-before dashicons-media-code" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;"> Add LaTeX</button>';
     ?>
     <script>
     jQuery(document).ready(function($) {

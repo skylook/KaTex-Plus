@@ -1,0 +1,9 @@
+/* Style the LaTeX button icon */
+.latex-icon {
+    fill: currentColor; /* Inherit color from parent */
+}
+
+/* Optional: Add hover effect similar to dashicons */
+#insert-latex-button:hover .latex-icon {
+    opacity: 0.7;
+}
