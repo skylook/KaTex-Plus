@@ -44,6 +44,7 @@ define('KATEX__OPTION_DEFAULT_AUTORENDER_OPTIONS', "              [
 
 $katex_resources_required = false;
 
+// add_action( 'init', 'my_tinymce_button' );
 
 if (is_admin() && !wp_doing_ajax()) {
     $katex_resources_required = true;
@@ -54,6 +55,7 @@ require_once(KATEX__PLUGIN_DIR . 'scripts/shortcode.php');
 if (!wp_doing_ajax()) {
     require_once(KATEX__PLUGIN_DIR . 'scripts/block.php');
     require_once(KATEX__PLUGIN_DIR . 'scripts/resource.php');
+    require_once(KATEX__PLUGIN_DIR . 'scripts/tinymce.php'); // Include TinyMCE logic here
 }
 
 register_uninstall_hook(__FILE__, 'katex_uninstall');

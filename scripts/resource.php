@@ -68,21 +68,30 @@ function katex_resources_init() {
         );
     }
 
+    // wp_register_script('classic-editor-button', KATEX__PLUGIN_URL . 'assets/classic-editor-button.js', array('jquery', 'tinymce'), false, true);
+
+
     if ($option_load_assets_conditionally) {
         add_action('loop_end', 'katex_resources_enqueue_conditionally');
-        add_action('admin_footer', 'katex_resources_enqueue_conditionally');
+        add_action('admin_footer', 'katex_admin_resources_enqueue_conditionally');
     } else {
-        // add_action('wp_enqueue_scripts', 'katex_resources_enqueue');
         add_action('wp_enqueue_scripts', 'katex_resources_enqueue');
-        add_action('admin_enqueue_scripts', 'katex_resources_enqueue');
+        add_action('admin_enqueue_scripts', 'katex_admin_resources_enqueue'); // Ensure this action is hooked to 'admin_enqueue_scripts'
     }
+
 }
 
 
 function katex_resources_enqueue() {
     wp_enqueue_script('katex');
-    wp_enqueue_script('katex_auto_render', array(), false, false);
+    wp_enqueue_script('katex_auto_render');
     wp_enqueue_style('katex');
+}
+
+
+function katex_admin_resources_enqueue() {
+    katex_resources_enqueue();
+    include_once(KATEX__PLUGIN_DIR . '/scripts/tinymce.php'); // Include the tinymce.php file
 }
 
 
@@ -91,6 +100,14 @@ function katex_resources_enqueue_conditionally() {
 
     if ($katex_resources_required) {
         katex_resources_enqueue();
+    }
+}
+
+function katex_admin_resources_enqueue_conditionally() {
+    global $katex_resources_required;
+
+    if ($katex_resources_required) {
+        katex_admin_resources_enqueue();
     }
 }
 
