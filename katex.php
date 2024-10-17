@@ -34,12 +34,17 @@ define('KATEX__OPTION_DEFAULT_LOAD_ASSETS_CONDITIONALLY', false);
 define('KATEX__OPTION_DEFAULT_ENABLE_LATEX_SHORTCODE', true);
 define('KATEX__OPTION_DEFAULT_ENABLE_AUTORENDER', false);
 // define('KATEX__OPTION_DEFAULT_AUTORENDER_OPTIONS', "\{\}");
-define('KATEX__OPTION_DEFAULT_AUTORENDER_OPTIONS', "              [
-    {left: '$$', right: '$$', display: true},
-    {left: '$', right: '$', display: false},
-    {left: '\\(', right: '\\)', display: false},
-    {left: '\\[', right: '\\]', display: true}
-]");
+define('KATEX__OPTION_DEFAULT_AUTORENDER_OPTIONS', '[
+  {left: "$$", right: "$$", display: true},
+  {left: "$", right: "$", display: false},
+  {left: "\\(", right: "\\)", display: false},
+  {left: "\\begin{equation}", right: "\\end{equation}", display: true},
+  {left: "\\begin{align}", right: "\\end{align}", display: true},
+  {left: "\\begin{alignat}", right: "\\end{alignat}", display: true},
+  {left: "\\begin{gather}", right: "\\end{gather}", display: true},
+  {left: "\\begin{CD}", right: "\\end{CD}", display: true},
+  {left: "\\[", right: "\\]", display: true}
+]');
 
 
 $katex_resources_required = false;

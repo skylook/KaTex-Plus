@@ -17,6 +17,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+include("latex_utils.php");
+
 katex_shortcode_init();
 katex_prevent_autorender_latex_init();
 
@@ -52,8 +54,8 @@ function katex_display_inline_render($attributes, $content = null) {
     // Truthy -> 'true', falsy -> 'false'
     $display = $attributes['display'] ? 'true' : 'false';
 
-    $content = preg_replace("|<br\s*/?>|", "\n", $content);
-    $encoded = htmlspecialchars(html_entity_decode($content));
+    $encoded  = restore_latex_in_text($content);
+
     return sprintf('<span class="katex-eq" data-katex-display="%s">%s</span>', $display, $encoded);
 }
 
@@ -66,23 +68,13 @@ function katex_shortcode_exempt_from_wptexturize($shortcodes) {
 
 
 function katex_prevent_autorender_latex($content) {
-    error_log("Content before regex: " . $content); // Log before regex
+    // error_log("Content before regex: " . $content); // Log before regex
 
-    $content = preg_replace_callback('/(\\begin{(equation|align\*?|gather\*?|multline\*?)})(.*?)(\\end{\\2}|)/s', function ($matches) {
-        var_dump($matches);
-        
-        $latexContent = isset($matches[3]) ? $matches[3] : '';
-        $latexContent = str_replace('<br />', "\n", $latexContent);
-        $latexContent = str_replace('<p>', '', $latexContent);
-        $latexContent = str_replace('</p>', '', $latexContent);
+    $content = restore_latex_in_text($content);
 
-        $startDelimiter = isset($matches[1]) ? $matches[1] : '';
-        $endDelimiter = isset($matches[4]) ? $matches[4] : '';
+    $katex_resources_required = true;
 
-        return $startDelimiter . $latexContent . $endDelimiter;
-    }, $content);
-
-    error_log("Content after regex: " . $content);  // Log after regex
+    // error_log("Content after regex: " . $content);  // Log after regex
     return $content;
 }
 
