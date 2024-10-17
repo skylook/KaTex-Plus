@@ -9,11 +9,12 @@ function add_latex_button() {
     <script>
     jQuery(document).ready(function($) {
         $('#insert-latex-button').click(function() {
-            var dialog = $('<div></div>').attr('title', 'Insert LaTeX').addClass('latex-dialog').appendTo('body'); // Added latex-dialog class
-            var latexCodeField = $('<textarea></textarea>').attr('id', 'latex-code').css({'width': '100%', 'height': '100px', 'display': 'block'}).appendTo(dialog); // Added display: block
-            var modeSelect = $('<select></select>').attr('id', 'latex-mode').css({'width': '100%', 'margin-top': '10px'}).appendTo(dialog); // Added width and margin
+            var dialog = $('<div></div>').attr('title', 'Insert LaTeX').addClass('latex-dialog').appendTo('body');
+            var latexCodeField = $('<textarea></textarea>').attr('id', 'latex-code').css({'width': '100%', 'height': '100px', 'display': 'block'}).appendTo(dialog);
+            var modeSelect = $('<select></select>').attr('id', 'latex-mode').css({'width': '100%', 'margin-top': '10px'}).appendTo(dialog);
             $('<option></option>').attr('value', 'inline').text('Inline').appendTo(modeSelect);
             $('<option></option>').attr('value', 'block').text('Block').appendTo(modeSelect);
+            var labelField = $('<input type="text">').attr('id', 'latex-label').attr('placeholder', 'Label (optional)').css({'width': '100%', 'margin-top': '10px'}).appendTo(dialog);
 
 
             dialog.dialog({
@@ -21,15 +22,23 @@ function add_latex_button() {
                 buttons: {
                     'Insert': {
                         text: 'Insert',
-                        class: 'insert-latex-button', // Added class to the button
+                        class: 'insert-latex-button',
                         click: function() {
-                            
                             var latexCode = $('#latex-code').val();
                             var mode = $('#latex-mode').val();
-                            var shortcode = '[latex' + (mode === 'block' ? ' display="true"]' : ']') + latexCode + '[/latex]';
+                            var label = $('#latex-label').val();
+
+                            var shortcode = '[latex';
+                            if (mode === 'block') {
+                                shortcode += ' display="true"';
+                            }
+                            if (label) {
+                                shortcode += ' label="' + label + '"';
+                            }
+                            shortcode += ']' + latexCode + '[/latex]';
+
                             wp.media.editor.insert(shortcode);
                             $(this).dialog('close');
-
                         }
                     },
                     'Cancel': function() {

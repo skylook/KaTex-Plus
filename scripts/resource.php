@@ -69,7 +69,9 @@ function katex_resources_init() {
     }
 
     // wp_register_script('classic-editor-button', KATEX__PLUGIN_URL . 'assets/classic-editor-button.js', array('jquery', 'tinymce'), false, true);
-
+    // Register and enqueue katex-label-ref.js
+    wp_register_script('katex-label-ref', KATEX__PLUGIN_URL . 'assets/katex-plus/katex-label-ref.js', array('katex'), false, true);
+ 
 
     if ($option_load_assets_conditionally) {
         add_action('loop_end', 'katex_resources_enqueue_conditionally');
@@ -91,11 +93,13 @@ function katex_resources_enqueue() {
     wp_enqueue_script('katex');
     wp_enqueue_script('katex_auto_render');
     wp_enqueue_style('katex');
+
+    wp_enqueue_script('katex-label-ref');
 }
 
 
 function katex_admin_resources_enqueue() {
-    katex_resources_enqueue();
+    katex_resources_enqueue(); // Call katex_resources_enqueue to enqueue katex-label-ref.js
     include_once(KATEX__PLUGIN_DIR . '/scripts/tinymce.php'); // Include the tinymce.php file
 }
 
@@ -195,15 +199,23 @@ function katex_enable() {
                   {left: '$$', right: '$$', display: true},
                   {left: '$', right: '$', display: false},
                   {left: '\\(', right: '\\)', display: false},
-                  {left: '\\[', right: '\\]', display: true}
+                  {left: '\\[', right: '\\]', display: true},
+                  {left: '\\begin{equation}', right: '\\end{equation}', display: true} // Add equation support
               ]
               <?php
                 }
                 ?>
               // • rendering keys, e.g.:
               ,
-              throwOnError : false
+              throwOnError : false,
+              trust: true, // Allow macros for labels and references
+              macros: {
+                  "\\label": "\\htmlId{#1}{}" // Macro for labels
+              }
             });
+
+            // Process and replace references
+            replaceReferences();
         <?php
         }
         ?>

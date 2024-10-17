@@ -18,6 +18,8 @@
  */
 
 katex_shortcode_init();
+katex_prevent_autorender_latex_init();
+
 
 function katex_shortcode_init() {
     $option_enable_latex_shortcode = get_option('katex_enable_latex_shortcode', KATEX__OPTION_DEFAULT_ENABLE_LATEX_SHORTCODE);
@@ -31,6 +33,9 @@ function katex_shortcode_init() {
     add_filter('no_texturize_shortcodes', 'katex_shortcode_exempt_from_wptexturize');
 }
 
+function katex_prevent_autorender_latex_init() {
+    add_filter('the_content', 'katex_prevent_autorender_latex');    // Corrected function name here. The user had mistakenly put katex_prevent_autorender_latex_init
+}
 
 function katex_display_inline_render($attributes, $content = null) {
     global $katex_resources_required;
@@ -49,7 +54,6 @@ function katex_display_inline_render($attributes, $content = null) {
 
     $content = preg_replace("|<br\s*/?>|", "\n", $content);
     $encoded = htmlspecialchars(html_entity_decode($content));
-//    $encoded = html_entity_decode($content);
     return sprintf('<span class="katex-eq" data-katex-display="%s">%s</span>', $display, $encoded);
 }
 
@@ -59,3 +63,28 @@ function katex_shortcode_exempt_from_wptexturize($shortcodes) {
     $shortcodes[] = 'latex';
     return $shortcodes;
 }
+
+
+function katex_prevent_autorender_latex($content) {
+    error_log("Content before regex: " . $content); // Log before regex
+
+    $content = preg_replace_callback('/(\\begin{(equation|align\*?|gather\*?|multline\*?)})(.*?)(\\end{\\2}|)/s', function ($matches) {
+        var_dump($matches);
+        
+        $latexContent = isset($matches[3]) ? $matches[3] : '';
+        $latexContent = str_replace('<br />', "\n", $latexContent);
+        $latexContent = str_replace('<p>', '', $latexContent);
+        $latexContent = str_replace('</p>', '', $latexContent);
+
+        $startDelimiter = isset($matches[1]) ? $matches[1] : '';
+        $endDelimiter = isset($matches[4]) ? $matches[4] : '';
+
+        return $startDelimiter . $latexContent . $endDelimiter;
+    }, $content);
+
+    error_log("Content after regex: " . $content);  // Log after regex
+    return $content;
+}
+
+
+?>

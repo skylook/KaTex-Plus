@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>KaTeX with Auto-Render and Reference Support</title>
+    <!-- KaTeX CSS -->
+    <link rel="stylesheet" href="../assets/katex-0.16.11/katex.min.css">
+    <!-- KaTeX JS -->
+    <script defer src="../assets/katex-0.16.11/katex.min.js"></script>
+    <!-- KaTeX Auto-render Extension -->
+    <script defer src="../assets/katex-0.16.11/contrib/auto-render.min.js"></script>
+    <!-- KaTex Support Label and Ref -->
+    <script defer src="../assets/katex-plus/katex-label-ref.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .katex-display {
+            margin: 1em 0;
+            position: relative;
+        }
+        #debug {
+            margin-top: 2em;
+            border-top: 1px solid #ccc;
+            padding-top: 1em;
+        }
+        #debug pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            background-color: #f0f0f0;
+            padding: 1em;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>KaTeX with Auto-Render and Reference Support Example</h1>
+
+    <p>这是一个使用 KaTeX 自动渲染 LaTeX 内容的例子，包括对 \label 和 \ref 的支持。</p>
+
+    <p>让我们从著名的质能方程开始：</p>
+
+    \begin{equation}
+    E = mc^2 \label{eq:einstein}
+    \end{equation}
+
+    <p>正如方程 \ref{eq:einstein} 所示，能量和质量是等价的。这个方程由爱因斯坦提出，是现代物理学的基石之一。</p>
+
+    <p>接下来，让我们看看牛顿第二定律：</p>
+
+    \begin{equation}
+    F = ma \label{eq:newton}
+    \end{equation}
+
+    <p>牛顿第二定律（方程 \ref{eq:newton}）描述了力和加速度的关系。它表明，一个物体受到的合力等于它的质量乘以它的加速度。</p>
+
+    <p>最后，让我们看一个来自数学领域的方程，欧拉恒等式：</p>
+
+    \begin{equation}
+    e^{i\pi} + 1 = 0 \label{eq:euler} \tag{A}
+    \end{equation}
+
+    $$E=mc^2\label{eq:es2}$$
+    $E=mc^2$
+
+    <p>欧拉恒等式（方程 \ref{eq:euler}）被认为是数学中最美丽的方程之一，因为它巧妙地联系了数学中的五个基本常数。</p>
+
+    <p>在这个例子中，我们引用了方程 \ref{eq:einstein}、\ref{eq:newton} 和 \ref{eq:euler}，展示了 \ref 命令的使用。</p>
+
+    <p>测试 \ref{eq:es2} \ref{eq:einstein} \eqref{eq:einstein}</p>
+    <div id="debug">
+        <h2>Debug: KaTeX Rendered HTML</h2>
+        <pre id="debug-output"></pre>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Process \ref commands before KaTeX rendering
+            replaceReferences();
+
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "$", right: "$", display: false},
+                    {left: "\\(", right: "\\)", display: false},
+                    {left: "\\[", right: "\\]", display: true},
+                    {left: "\\begin{equation}", right: "\\end{equation}", display: true}
+                ],
+                throwOnError: false,
+                trust: true,
+                strict: false,
+                macros: {
+                    "\\label": "\\htmlId{#1}{}",
+                    // "\\tag": "\\htmlClass{tag}{#1}"
+                }
+            });
+
+            // 调用函数以处理方程和引用
+            processEquationsAndReferences();
+
+            // Debug: Display KaTeX rendered HTML
+            const debugOutput = document.getElementById('debug-output');
+            debugOutput.textContent = document.body.innerHTML;
+        });
+    </script>
+</body>
+</html>
