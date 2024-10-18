@@ -74,6 +74,8 @@ function katex_prevent_autorender_latex($content) {
 
     $katex_resources_required = true;
 
+    // $decoded = sprintf('<span class="katex-eq" data-katex-display="%s">%s</span>', $display, $encoded);
+
     // error_log("Content after regex: " . $content);  // Log after regex
     return $content;
 }
