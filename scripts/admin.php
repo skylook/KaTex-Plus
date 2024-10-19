@@ -53,6 +53,11 @@ function katex_settings_init() {
         'katex_autorender_options'
     );
 
+    register_setting(
+        'pluginPage',
+        'katex_support_ref_label'
+    );
+
     add_settings_section(
         'katex_pluginPage_section',
         __('Main', 'katex'),
@@ -98,7 +103,15 @@ function katex_settings_init() {
         'katex_autorender_options_setting_render',
         'pluginPage',
         'katex_pluginPage_section'
-    );    
+    );
+
+    add_settings_field(
+        'katex_support_ref_label_setting',
+        __('Support for ref and label', 'katex'),
+        'katex_support_ref_label_setting_render',
+        'pluginPage',
+        'katex_pluginPage_section'
+    );
 }
 
 
@@ -137,7 +150,7 @@ function katex_latex_shortcode_setting_render() {
         <?php checked($option_katex_enable_latex_shortcode, 1); ?>
         value='1'>
     <?php
-    echo __('For compatability with other plugins you can use [latex] shortcodes in addition to [katex].', 'katex');
+    echo __('For compatibility with other plugins you can use [latex] shortcodes in addition to [katex].', 'katex');
 
 }
 
@@ -162,6 +175,20 @@ function katex_autorender_options_setting_render() {
     echo __('Optional object argument that can have the same keys as the object passed to katex.render. Read more: <a href="https://katex.org/docs/autorender" target="_blank">Autorender</a>', 'katex');
 
 }
+
+function katex_support_ref_label_setting_render() {
+    $option_katex_support_ref_label = get_option('katex_support_ref_label', 0);
+    ?>
+    <input
+        type='checkbox'
+        name='katex_support_ref_label'
+        <?php checked($option_katex_support_ref_label, 1); ?>
+        value='1'>
+    <?php
+    echo __('Enable support for ref and label in your documents.', 'katex');
+
+}
+
 function katex_settings_section_callback() {
      echo __('', 'katex');
 }
