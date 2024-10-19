@@ -179,6 +179,9 @@ function katex_enable() {
 
                 katexObserver.observe(document.body, katexObservationConfig);
 
+            // Process \ref commands before KaTeX rendering
+            replaceReferences();
+
                 <?php
         if ($option_katex_enable_autorender) {
             ?>
@@ -214,11 +217,12 @@ function katex_enable() {
               }
             });
 
-            // Process and replace references
-            replaceReferences();
+
         <?php
         }
         ?>
+            // 调用函数以处理方程和引用
+            processEquationsAndReferences();
             });
 
 
