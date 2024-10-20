@@ -170,16 +170,7 @@ function katex_enable() {
                     echo $option_katex_autorender_options;
                 }
                 else {
-                    ?>
-
-              [
-                  {left: '$$', right: '$$', display: true},
-                  {left: '$', right: '$', display: false},
-                  {left: '\\(', right: '\\)', display: false},
-                  {left: '\\[', right: '\\]', display: true},
-                  {left: '\\begin{equation}', right: '\\end{equation}', display: true} // Add equation support
-              ]
-              <?php
+                    echo KATEX__OPTION_DEFAULT_AUTORENDER_OPTIONS;
                 }
                 if ($option_support_ref_label) {
                 ?>

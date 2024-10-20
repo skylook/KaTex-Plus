@@ -22,6 +22,8 @@ function restore_latex_in_text($text) {
     // Updated pattern to match begin and end with the same identifier
     $pattern = '/(\$[^$]+\$|\$\$[^$]+\$\$|\\\\begin{([^}]+)}.*?\\\\end{\2}|\\\\\[.*?\\\\\])/s';
 
+    $is_display = false;
+
     // Replace each LaTeX match with its restored version
     $restored_text = preg_replace_callback($pattern, function($matches) {
         // echo '$matches[0] = '. $matches[0] .'\n';
@@ -35,9 +37,21 @@ function restore_latex_in_text($text) {
 
         // Use sprintf to style differently based on display or inline
         // return sprintf('<span class="katex-eq" data-katex-display="%s">%s</span>', $is_display ? 'true' : 'false', $latex);
+        
+        // $latex_content = array(
+        //     'is_display'    => $is_display,
+        //     'content'       => $latex
+        // );
+
+        // return $latex_content;
         return $latex;
     }, $text);
 
+    // $latex_content = array(
+    //     'is_display'    => $is_display,
+    //     'content'       => $restored_text
+    // );
+    // return $latex_content;
     return $restored_text;
 }
 ?>

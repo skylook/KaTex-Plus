@@ -40,6 +40,8 @@ function katex_prevent_autorender_latex_init() {
 }
 
 function katex_display_inline_render($attributes, $content = null) {
+    $option_katex_enable_autorender = get_option('katex_enable_autorender', KATEX__OPTION_DEFAULT_ENABLE_AUTORENDER);
+
     global $katex_resources_required;
     $katex_resources_required = true;
 
@@ -54,9 +56,23 @@ function katex_display_inline_render($attributes, $content = null) {
     // Truthy -> 'true', falsy -> 'false'
     $display = $attributes['display'] ? 'true' : 'false';
 
-    $encoded  = restore_latex_in_text($content);
+    $latex_content  = restore_latex_in_text($content);
 
-    return sprintf('<span class="katex-eq" data-katex-display="%s">%s</span>', $display, $encoded);
+    // var_dump($latex_content);
+
+    // $is_display = $latex_content['is_display'];
+    // $encoded = $latex_content['content'];
+
+    // $result_text = $latex_content;
+
+    // // 避免autorender 开启的情况下，重复添加了 katex-eq
+    // if ($option_katex_enable_autorender === false) {
+    //     $result_text = sprintf('<span class="katex-eq" data-katex-display="%s">%s</span>', $display, $latex_content);
+    // }
+
+    $result_text = sprintf('<span class="katex-eq" data-katex-display="%s">%s</span>', $display, $latex_content);
+
+    return $result_text;
 }
 
 
@@ -70,14 +86,21 @@ function katex_shortcode_exempt_from_wptexturize($shortcodes) {
 function katex_prevent_autorender_latex($content) {
     // error_log("Content before regex: " . $content); // Log before regex
 
-    $content = restore_latex_in_text($content);
+    // $content = restore_latex_in_text($content);
+
+    $latex_content  = restore_latex_in_text($content);
+
+    // var_dump($latex_content);
+
+    // $is_display = $latex_content['is_display'];
+    // $content = $latex_content['content'];
 
     $katex_resources_required = true;
 
     // $decoded = sprintf('<span class="katex-eq" data-katex-display="%s">%s</span>', $display, $encoded);
 
     // error_log("Content after regex: " . $content);  // Log after regex
-    return $content;
+    return $latex_content;
 }
 
 
