@@ -166,22 +166,26 @@ function katex_autorender_options_setting_render() {
     $options = !empty($option_katex_autorender_options) ? explode(',', $option_katex_autorender_options) : [];
 
     ?>
-    <label class="katex-autorender-options" style="display: none;">
+    <div id="autorenderOptionsDiv" style="display: none;">
+    <label class="katex-autorender-options" style="display: block;">
         <input type="checkbox" name="katex_autorender_options[single_dollar]" value="single_dollar" <?php in_array('single_dollar', $options) ? 'checked' : ''; ?>>
         $...$
     </label><br>
-    <label class="katex-autorender-options" style="display: none;">
+    <label class="katex-autorender-options" style="display: block;">
         <input type="checkbox" name="katex_autorender_options[double_dollar]" value="double_dollar" <?php in_array('double_dollar', $options) ? 'checked' : ''; ?>>
         $$...$$
     </label><br>
-    <label class="katex-autorender-options" style="display: none;">
+    <label class="katex-autorender-options" style="display: block;">
         <input type="checkbox" name="katex_autorender_options[backslash_parentheses]" value="backslash_parentheses" <?php in_array('backslash_parentheses', $options) ? 'checked' : ''; ?>>
         \(...\)
     </label><br>
-    <label class="katex-autorender-options" style="display: none;">
+    <label class="katex-autorender-options" style="display: block;">
         <input type="checkbox" name="katex_autorender_options[backslash_brackets]" value="backslash_brackets" <?php in_array('backslash_brackets', $options) ? 'checked' : ''; ?>>
         \[...\]
     </label><br>
+    <textarea id="delimitersPreview" readonly style="width: 100%; height: 100px; resize: none;"></textarea>
+    </div>
+    <label id="autorenderNotice" style="color: gray;">Autorender options are only available when Enable the KaTeX Auto-render Extension is activated</label>
     <?php
 }
 
@@ -213,27 +217,28 @@ function katex_options_page() {
             ?>
         </form>
 
-        <textarea id="delimitersPreview" readonly style="width: 100%; height: 100px; resize: none;"></textarea>
     </div>
     
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         const autorenderCheckbox = document.querySelector('input[name="katex_enable_autorender"]');
+        const autorenderOptionsDiv = document.getElementById('autorenderOptionsDiv');
         const autorenderOptions = document.querySelectorAll('input[name^="katex_autorender_options"]'); // Corrected selector
-        const autorenderField = document.querySelector('.katex-autorender-options');
-        const autorenderNotice = document.createElement('p');
+        // const autorenderField = document.querySelector('.katex-autorender-options');
+        const autorenderNotice = document.getElementById('autorenderNotice');
         const delimitersPreview = document.getElementById('delimitersPreview');
 
-        autorenderNotice.textContent = "Autorender options are only available when Enable the KaTeX Auto-render Extension is activated";
-        autorenderNotice.style.color = "gray";
+        // autorenderNotice.textContent = "";
+        // autorenderNotice.style.color = "gray";
         autorenderNotice.style.display = "none";
 
         function toggleAutorenderOptions() {
             const isEnabled = autorenderCheckbox.checked;
-            autorenderOptions.forEach(option => {
-                option.closest('label').style.display = isEnabled ? 'block' : 'none';
-            });
-            if (autorenderField) autorenderField.style.display = isEnabled ? 'block' : 'none';
+            // autorenderOptions.forEach(option => {
+            //     option.closest('label').style.display = isEnabled ? 'block' : 'none';
+            // });
+            autorenderOptionsDiv.style.display = isEnabled ? 'block' : 'none'; 
+            // if (autorenderField) autorenderField.style.display = isEnabled ? 'block' : 'none';
             autorenderNotice.style.display = isEnabled ? 'none' : 'block';
         }
 
