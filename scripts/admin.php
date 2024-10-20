@@ -9,7 +9,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License along
@@ -21,11 +21,9 @@ add_action('admin_menu', 'katex_add_admin_menu');
 add_action('admin_init', 'katex_settings_init');
 add_action('admin_enqueue_scripts', 'katex_admin_enqueue_styles'); // Add enqueue action
 
-
 function katex_add_admin_menu() {
     add_options_page('KaTeX', 'KaTeX', 'manage_options', 'katex', 'katex_options_page');
 }
-
 
 function katex_settings_init() {
     register_setting(
@@ -95,7 +93,7 @@ function katex_settings_init() {
         'katex_enable_autorender_setting_render',
         'pluginPage',
         'katex_pluginPage_section'
-    );    
+    );
 
     add_settings_field(
         'katex_autorender_options_setting',
@@ -107,13 +105,12 @@ function katex_settings_init() {
 
     add_settings_field(
         'katex_support_ref_label_setting',
-        __('Support for ref and label', 'katex'),
+        __('Support for \ref and \label', 'katex'),
         'katex_support_ref_label_setting_render',
         'pluginPage',
         'katex_pluginPage_section'
     );
 }
-
 
 function katex_jsdelivr_setting_render() {
     $option_katex_use_jsdelivr = get_option('katex_use_jsdelivr', KATEX__OPTION_DEFAULT_USE_JSDELIVR);
@@ -127,7 +124,6 @@ function katex_jsdelivr_setting_render() {
     echo __('Using the <a href="http://www.jsdelivr.com" target="_blank">jsDelivr</a> CDN will make KaTeX load faster.', 'katex');
 }
 
-
 function katex_conditional_assets_setting_render() {
     $option_katex_load_assets_conditionally = get_option('katex_load_assets_conditionally', KATEX__OPTION_DEFAULT_LOAD_ASSETS_CONDITIONALLY);
     ?>
@@ -140,7 +136,6 @@ function katex_conditional_assets_setting_render() {
     echo __('Only load the KaTeX JavaScript and CSS assets when KaTeX is used on the page. This might introduce asset enqueueing compatibility issues with themes or other plugins.', 'katex');
 }
 
-
 function katex_latex_shortcode_setting_render() {
     $option_katex_enable_latex_shortcode = get_option('katex_enable_latex_shortcode', KATEX__OPTION_DEFAULT_ENABLE_LATEX_SHORTCODE);
     ?>
@@ -151,7 +146,6 @@ function katex_latex_shortcode_setting_render() {
         value='1'>
     <?php
     echo __('For compatibility with other plugins you can use [latex] shortcodes in addition to [katex].', 'katex');
-
 }
 
 function katex_enable_autorender_setting_render() {
@@ -164,16 +158,31 @@ function katex_enable_autorender_setting_render() {
         value='1'>
     <?php
     echo __('Automatically render all of the math inside of text. Read more: <a href="https://katex.org/docs/autorender" target="_blank">Autorender</a>', 'katex');
-
 }
 
 function katex_autorender_options_setting_render() {
     $option_katex_autorender_options = get_option('katex_autorender_options', KATEX__OPTION_DEFAULT_AUTORENDER_OPTIONS);
-    ?>
-    <textarea cols='40' rows='5' name='katex_autorender_options'><?php echo $option_katex_autorender_options; ?></textarea>
-    <?php
-    echo __('Optional object argument that can have the same keys as the object passed to katex.render. Read more: <a href="https://katex.org/docs/autorender" target="_blank">Autorender</a>', 'katex');
+    
+    $options = !empty($option_katex_autorender_options) ? explode(',', $option_katex_autorender_options) : [];
 
+    ?>
+    <label class="katex-autorender-options" style="display: none;">
+        <input type="checkbox" name="katex_autorender_options[single_dollar]" value="single_dollar" <?php in_array('single_dollar', $options) ? 'checked' : ''; ?>>
+        $...$
+    </label><br>
+    <label class="katex-autorender-options" style="display: none;">
+        <input type="checkbox" name="katex_autorender_options[double_dollar]" value="double_dollar" <?php in_array('double_dollar', $options) ? 'checked' : ''; ?>>
+        $$...$$
+    </label><br>
+    <label class="katex-autorender-options" style="display: none;">
+        <input type="checkbox" name="katex_autorender_options[backslash_parentheses]" value="backslash_parentheses" <?php in_array('backslash_parentheses', $options) ? 'checked' : ''; ?>>
+        \(...\)
+    </label><br>
+    <label class="katex-autorender-options" style="display: none;">
+        <input type="checkbox" name="katex_autorender_options[backslash_brackets]" value="backslash_brackets" <?php in_array('backslash_brackets', $options) ? 'checked' : ''; ?>>
+        \[...\]
+    </label><br>
+    <?php
 }
 
 function katex_support_ref_label_setting_render() {
@@ -185,27 +194,98 @@ function katex_support_ref_label_setting_render() {
         <?php checked($option_katex_support_ref_label, 1); ?>
         value='1'>
     <?php
-    echo __('Enable support for ref and label in your documents.', 'katex');
-
+    echo __('Enable support for \ref \eqref and \label in your documents.', 'katex');
 }
 
 function katex_settings_section_callback() {
      echo __('', 'katex');
 }
 
-
 function katex_options_page() {
-     ?>
+    ?>
     <div class="wrap">
         <h1>KaTeX</h1>
         <form action="options.php" method="post">
             <?php
-            settings_fields( 'pluginPage' );
-            do_settings_sections( 'pluginPage' );
+            settings_fields('pluginPage');
+            do_settings_sections('pluginPage');
             submit_button();
             ?>
         </form>
+
+        <textarea id="delimitersPreview" readonly style="width: 100%; height: 100px; resize: none;"></textarea>
     </div>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const autorenderCheckbox = document.querySelector('input[name="katex_enable_autorender"]');
+        const autorenderOptions = document.querySelectorAll('input[name^="katex_autorender_options"]'); // Corrected selector
+        const autorenderField = document.querySelector('.katex-autorender-options');
+        const autorenderNotice = document.createElement('p');
+        const delimitersPreview = document.getElementById('delimitersPreview');
+
+        autorenderNotice.textContent = "Autorender options are only available when Enable the KaTeX Auto-render Extension is activated";
+        autorenderNotice.style.color = "gray";
+        autorenderNotice.style.display = "none";
+
+        function toggleAutorenderOptions() {
+            const isEnabled = autorenderCheckbox.checked;
+            autorenderOptions.forEach(option => {
+                option.closest('label').style.display = isEnabled ? 'block' : 'none';
+            });
+            if (autorenderField) autorenderField.style.display = isEnabled ? 'block' : 'none';
+            autorenderNotice.style.display = isEnabled ? 'none' : 'block';
+        }
+
+        function updateDelimitersPreview() {
+            const delimiters = [];
+            if (autorenderCheckbox.checked) {    
+                const delimiterMap = {
+                    "double_dollar": {left: '$$', right: '$$', display: true},
+                    "single_dollar": {left: '$', right: '$', display: false},
+                    "backslash_parentheses": {left: '\\(', right: '\\)', display: false},
+                    "backslash_brackets": {left: '\\[', right: '\\]', display: true}
+                };
+
+                autorenderOptions.forEach(option => {
+                    if (option.checked) {
+                        let delimiter = delimiterMap[option.value];
+                        if (delimiter) {
+                            delimiters.push(delimiter);
+                        } else {
+                            console.error('Not in delimiterMap key = ' + option.value);
+                        }
+                    }
+                });
+
+                console.info('delimiters 1 = ' + JSON.stringify(delimiters));
+
+                // Ensure $$...$$ appears first if checked
+                delimiters.sort((a, b) => {
+                    if (a.left === '$$' && b.left === '$') return -1;
+                    if (a.left === '$' && b.left === '$$') return 1;
+                    return 0;
+                });
+
+                console.info('delimiters 2 = ' + JSON.stringify(delimiters));
+            }
+            const delimitersString = delimiters.map(d => `{left: '${d.left}', right: '${d.right}', display: ${d.display}}`).join(',\n');
+            delimitersPreview.value = `[${delimitersString}]`;
+        }
+
+        autorenderOptions.forEach(option => {
+            option.addEventListener('change', updateDelimitersPreview);
+        });
+
+        autorenderCheckbox.addEventListener('change', toggleAutorenderOptions);
+
+        toggleAutorenderOptions();
+        updateDelimitersPreview();
+        
+        autorenderField.parentNode.insertBefore(autorenderNotice, autorenderField.nextSibling);
+    });
+    </script>
+    
     <?php
 }
 
