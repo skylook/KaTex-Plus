@@ -26,48 +26,39 @@ function katex_add_admin_menu() {
 }
 
 function katex_settings_init() {
+    // Main tab settings
     register_setting(
-        'pluginPage',
+        'mainSettingsPage',
         'katex_use_jsdelivr'
     );
 
     register_setting(
-        'pluginPage',
+        'mainSettingsPage',
         'katex_load_assets_conditionally'
     );
 
     register_setting(
-        'pluginPage',
+        'mainSettingsPage',
         'katex_enable_latex_shortcode'
     );
 
     register_setting(
-        'pluginPage',
-        'katex_enable_autorender'
-    );
-
-    register_setting(
-        'pluginPage',
-        'katex_autorender_options'
-    );
-
-    register_setting(
-        'pluginPage',
+        'mainSettingsPage',
         'katex_support_ref_label'
     );
 
     add_settings_section(
         'katex_pluginPage_section',
-        __('Main', 'katex'),
+        __('Basic', 'katex'),
         'katex_settings_section_callback',
-        'pluginPage'
+        'mainSettingsPage'
     );
 
     add_settings_field(
         'katex_jsdelivr_setting',
         __('Use jsDelivr to load files', 'katex'),
         'katex_jsdelivr_setting_render',
-        'pluginPage',
+        'mainSettingsPage',
         'katex_pluginPage_section'
     );
 
@@ -75,7 +66,7 @@ function katex_settings_init() {
         'katex_conditional_assets_setting',
         __('Load KaTeX assets conditionally', 'katex'),
         'katex_conditional_assets_setting_render',
-        'pluginPage',
+        'mainSettingsPage',
         'katex_pluginPage_section'
     );
 
@@ -83,23 +74,7 @@ function katex_settings_init() {
         'katex_latex_shortcode_setting',
         __('Enable the [latex] shortcode', 'katex'),
         'katex_latex_shortcode_setting_render',
-        'pluginPage',
-        'katex_pluginPage_section'
-    );
-
-    add_settings_field(
-        'katex_enable_autorender_setting',
-        __('Enable the KaTeX Auto-render Extension', 'katex'),
-        'katex_enable_autorender_setting_render',
-        'pluginPage',
-        'katex_pluginPage_section'
-    );
-
-    add_settings_field(
-        'katex_autorender_options_setting',
-        __('The autorender option content', 'katex'),
-        'katex_autorender_options_setting_render',
-        'pluginPage',
+        'mainSettingsPage',
         'katex_pluginPage_section'
     );
 
@@ -107,8 +82,44 @@ function katex_settings_init() {
         'katex_support_ref_label_setting',
         __('Support for \ref and \label', 'katex'),
         'katex_support_ref_label_setting_render',
-        'pluginPage',
+        'mainSettingsPage',
         'katex_pluginPage_section'
+    );
+
+    // New Auto-Render Section
+    register_setting(
+        'autoRenderSettingsPage',
+        'katex_enable_autorender'
+    );
+
+    register_setting(
+        'autoRenderSettingsPage',
+        'katex_autorender_options'
+    );
+
+
+
+    add_settings_section(
+        'katex_auto_render_section',
+        __('Auto-Render Configurations', 'katex'),
+        'katex_auto_render_section_callback',
+        'autoRenderSettingsPage'
+    );
+
+    add_settings_field(
+        'katex_enable_autorender_setting',
+        __('Enable the KaTeX Auto-render Extension', 'katex'),
+        'katex_enable_autorender_setting_render',
+        'autoRenderSettingsPage',
+        'katex_auto_render_section'
+    );
+
+    add_settings_field(
+        'katex_autorender_options_setting',
+        __('The autorender option content', 'katex'),
+        'katex_autorender_options_setting_render',
+        'autoRenderSettingsPage',
+        'katex_auto_render_section'
     );
 }
 
@@ -202,43 +213,57 @@ function katex_support_ref_label_setting_render() {
 }
 
 function katex_settings_section_callback() {
-     echo __('', 'katex');
+     echo __('Basic settings for KaTeX', 'katex');
+}
+
+function katex_auto_render_section_callback() {
+     echo __('Configure the settings for KaTeX auto-rendering.', 'katex');
 }
 
 function katex_options_page() {
     ?>
     <div class="wrap">
         <h1>KaTeX</h1>
-        <form action="options.php" method="post">
-            <?php
-            settings_fields('pluginPage');
-            do_settings_sections('pluginPage');
-            submit_button();
-            ?>
-        </form>
-
+        <!-- Adding new tab navigation -->
+        <h2 class="nav-tab-wrapper">
+            <a href="#main" class="nav-tab nav-tab-active" id="main-tab">Basic</a>
+            <a href="#auto-render" class="nav-tab" id="auto-render-tab">Auto-Render Configurations</a>
+        </h2>
+        <div id="main" class="tab-content" style="display: block;">
+            <form action="options.php" method="post">
+                <?php
+                // Keep existing settings fields and sections for 'Main'
+                settings_fields('mainSettingsPage');
+                do_settings_sections('mainSettingsPage');
+                submit_button();
+                ?>
+            </form>
+        </div>
+        <div id="auto-render" class="tab-content" style="display: none;">
+            <form action="options.php" method="post">
+                <?php
+                // Settings fields and sections for 'Auto-Render Configurations'
+                settings_fields('autoRenderSettingsPage');
+                do_settings_sections('autoRenderSettingsPage');
+                submit_button();
+                ?>
+            </form>
+        </div>
     </div>
-    
+
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         const autorenderCheckbox = document.querySelector('input[name="katex_enable_autorender"]');
         const autorenderOptionsDiv = document.getElementById('autorenderOptionsDiv');
         const autorenderOptions = document.querySelectorAll('input[name^="katex_autorender_options"]'); // Corrected selector
-        // const autorenderField = document.querySelector('.katex-autorender-options');
         const autorenderNotice = document.getElementById('autorenderNotice');
         const delimitersPreview = document.getElementById('delimitersPreview');
 
-        // autorenderNotice.textContent = "";
-        // autorenderNotice.style.color = "gray";
         autorenderNotice.style.display = "none";
 
         function toggleAutorenderOptions() {
             const isEnabled = autorenderCheckbox.checked;
-            // autorenderOptions.forEach(option => {
-            //     option.closest('label').style.display = isEnabled ? 'block' : 'none';
-            // });
             autorenderOptionsDiv.style.display = isEnabled ? 'block' : 'none'; 
-            // if (autorenderField) autorenderField.style.display = isEnabled ? 'block' : 'none';
             autorenderNotice.style.display = isEnabled ? 'none' : 'block';
         }
 
@@ -263,19 +288,14 @@ function katex_options_page() {
                     }
                 });
 
-                console.info('delimiters 1 = ' + JSON.stringify(delimiters));
-
-                // Ensure $$...$$ appears first if checked
                 delimiters.sort((a, b) => {
                     if (a.left === '$$' && b.left === '$') return -1;
                     if (a.left === '$' && b.left === '$$') return 1;
                     return 0;
                 });
 
-                console.info('delimiters 2 = ' + JSON.stringify(delimiters));
+                delimitersPreview.value = `[${delimiters.map(d => `{left: '${d.left}', right: '${d.right}', display: ${d.display}}`).join(',\n')}]`;
             }
-            const delimitersString = delimiters.map(d => `{left: '${d.left}', right: '${d.right}', display: ${d.display}}`).join(',\n');
-            delimitersPreview.value = `[${delimitersString}]`;
         }
 
         autorenderOptions.forEach(option => {
@@ -286,11 +306,25 @@ function katex_options_page() {
 
         toggleAutorenderOptions();
         updateDelimitersPreview();
+
+        // Add Tab Navigation functions
+        const tabLinks = document.querySelectorAll('.nav-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
         
-        // autorenderField.parentNode.insertBefore(autorenderNotice, autorenderField.nextSibling);
+        tabLinks.forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                const activeTab = this.getAttribute('href').substring(1);
+                
+                tabLinks.forEach(link => link.classList.remove('nav-tab-active'));
+                tabContents.forEach(content => content.style.display = 'none');
+                
+                this.classList.add('nav-tab-active');
+                document.getElementById(activeTab).style.display = 'block';
+            });
+        });
     });
     </script>
-    
     <?php
 }
 
