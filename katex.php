@@ -33,7 +33,6 @@ define('KATEX__OPTION_DEFAULT_USE_JSDELIVR', false);
 define('KATEX__OPTION_DEFAULT_LOAD_ASSETS_CONDITIONALLY', false);
 define('KATEX__OPTION_DEFAULT_ENABLE_LATEX_SHORTCODE', true);
 define('KATEX__OPTION_DEFAULT_ENABLE_AUTORENDER', false);
-// define('KATEX__OPTION_DEFAULT_AUTORENDER_OPTIONS', "\{\}");
 define('KATEX__OPTION_DEFAULT_AUTORENDER_OPTIONS', '[
   {left: "$$", right: "$$", display: true},
   {left: "$", right: "$", display: false},
@@ -46,10 +45,16 @@ define('KATEX__OPTION_DEFAULT_AUTORENDER_OPTIONS', '[
   {left: "\\[", right: "\\]", display: true}
 ]');
 
-
 $katex_resources_required = false;
 
-// add_action( 'init', 'my_tinymce_button' );
+// Add a settings link to the plugins page
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'katex_add_settings_link');
+
+function katex_add_settings_link($links) {
+    $settings_link = '<a href="options-general.php?page=katex">Settings</a>';
+    array_unshift($links, $settings_link);
+    return $links;
+}
 
 if (is_admin() && !wp_doing_ajax()) {
     $katex_resources_required = true;

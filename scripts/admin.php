@@ -287,7 +287,7 @@ function katex_options_page() {
         toggleAutorenderOptions();
         updateDelimitersPreview();
         
-        autorenderField.parentNode.insertBefore(autorenderNotice, autorenderField.nextSibling);
+        // autorenderField.parentNode.insertBefore(autorenderNotice, autorenderField.nextSibling);
     });
     </script>
     
